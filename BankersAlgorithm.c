@@ -32,3 +32,41 @@ int main()
 	 return 0;
 	 
 }
+//Banker's Algorithm
+void inputvalue(int Allocation[][20],int Need[][20],int Max[20][20],int Available[1][20],int *p,int *r)
+{
+	int i,j;
+	printf("Enter the total no. of Processes : ");
+	scanf("%d",p);
+	printf("Enter the total no. of Resources : ");
+	scanf("%d",r);
+	for(i=0;i<*p;i++)
+	{
+		printf("\n Process P%d\n",i+1);
+		for(j=0;j<*r;j++)
+		{
+			printf("Allocation of Resource %d : ",j+1);
+			scanf("%d",&Allocation[i][j]);
+			printf("Maximum for Resource %d : ",j+1);
+			scanf("%d",&Max[i][j]);
+		}
+	}
+	printf("\nAvailable Reasources : \n");
+	for(i=0;i<*r;i++)
+	{
+		printf("Resource %d",i+1);
+		scanf("%d",&Available[0][i]);
+	}
+	
+	for(i=0;i<*p;i++)
+	for(j=0;j<*r;j++)
+	Need[i][j]=Max[i][j]-Allocation[i][j];
+		
+	printf("\n Allocation Matrix");
+	print(Allocation,*p,*r);
+	printf("\n Maximum Requirement Matrix");
+	print(Max,*p,*r);
+	printf("\n Need Matrix");
+	print(Need,*p,*r);
+}
+
