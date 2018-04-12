@@ -69,4 +69,22 @@ void inputvalue(int Allocation[][20],int Need[][20],int Max[20][20],int Availabl
 	printf("\n Need Matrix");
 	print(Need,*p,*r);
 }
+int banker(int Allocation[][20],int Need[][20],int Available[1][20],int p,int r)
+{
+	int j,i,arr[20];
+	j=safetyAlgorithm(Allocation,Need,Available,p,r,arr);
+	if(j!=0)
+	{
+		printf("\n\n");
+		for(i=0;i<p;i++)
+		printf("P%d",arr[i]);
+		printf("Safety Sequence has been detected.\n");
+		return 1;
+	}
+	else
+	{
+		printf("Deadlock has occured.\n");
+		return 0;
+	}
+}
 
