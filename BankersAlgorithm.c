@@ -87,4 +87,42 @@ int banker(int Allocation[][20],int Need[][20],int Available[1][20],int p,int r)
 		return 0;
 	}
 }
+// Safety Algorithm
+int safety(int Allocation[][20],int Need[][20],int AV[1][20],int p,int r,int arr[])
+{
+	int i,j,k,x=0;
+	int F[10],Available[1][20];
+	int pflag=0,flag=0;
+	for(i=0;i<p;i++)
+		F[i]=0;
+	for(i=0;i<r;i++)
+		Available[0][i]=AV[0][i];
+	for(k=0;k<p;k++)
+	{
+		for(i=0;i<p;i++)
+		{
+			if(F[i]==0)
+			{
+				flag=0;
+				for(j=0;j<r;j++)
+				{
+					if(Need[i][j]>Available[0][j])
+						flag=1;
+				}
+				if(flag==0 && F[i]==0)
+				{
+					for(j=0;j<r;j++)
+						Available[0][j]+=Allocation[i][j];
+					F[i]=1;
+					pflag++;
+					arr[x++]=i;
+				}
+			}
+		}
+		if(pflag==p)
+			return 1;
+	}
+	return 0;
+}
 
+		
