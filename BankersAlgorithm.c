@@ -124,5 +124,34 @@ int safety(int Allocation[][20],int Need[][20],int AV[1][20],int p,int r,int arr
 	}
 	return 0;
 }
-
+// Resource Request Algorithm
+resource_resquest(int Allocation[20][20],int Need[20][20],AV[20][20],int pid,int r)
+{
+	int req_matrix[1][20];
+	int i;
+	printf("Enter Additional Request : \n");
+	for(i=0;i<r;i++)
+	{
+		printf("Request for Resource %d :",i+1);
+		scanf("%d",&req_matrix[0][i]);
+	}
+	for(i=0;i<r;i++)
+		if(req_matrix[0][i] > Need[pid][i])
+		{
+			printf("Error Encountered.\n");
+			exit(0);
+		}
+	for(i=0;i<r;i++)
+		if(req_matrix[0][i] > AV[0][i])
+		{
+			printf("Resource Unavailable.\n");
+			exit(0);
+		}
+	for(i=0;i<r;i++)
+	{
+		AV[0][i]-=req_matrix[0][i];
+		Allocation[pid][i]+=req_matrix[0][i];
+		Need[pid][i]-=req_matrix[0][i];
+	}
+}
 		
