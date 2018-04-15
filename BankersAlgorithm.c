@@ -1,157 +1,155 @@
-                                  //Bankers Algorithm//
-    
+                                  // Bankers Algorithm //
 #include<stdio.h>
 #include<stdlib.h>
-int main()
-{
-	int Available[20][20];
-	int Max[20][20];
-	int Allocation[20][20];
-	int Need[20][20];
-	int p,r,choice,pno;
-	int retvalue;
-	printf("~~~~~~~~~~~~~~ BANKERS ALOGORITHM ~~~~~~~~~~~~~\n");
-	intputvalue(Allocation,Need,Max,Available,&p,&r);
-	retvalue=banker(Allocation,Available,Need,p,r);
-	if(retvalue!=0)
-	{
-		printf("Do you want to make additional request ? (1=Yes||0=No)\n");
-		scanf("%d",&choice);
-		if(choice==1)
-		{
-			printf("Enter process no. : ");
-			scanf("%d",&pno);
-			resource_request(Allocation,Need,Available,pno-1,r);
-			retvalue=banker(Allocation,Available,Need,p,r);
-			if(retvalue==0)
-			 exit(0);
-	    }
-	}
-	else
-	 exit(0);
-	 return 0;
-	 
-}
-//Banker's Algorithm
-void inputvalue(int Allocation[][20],int Need[][20],int Max[20][20],int Available[1][20],int *p,int *r)
-{
+
+void print(int x[][10],int n,int m){
 	int i,j;
-	printf("Enter the total no. of Processes : ");
-	scanf("%d",p);
-	printf("Enter the total no. of Resources : ");
-	scanf("%d",r);
-	for(i=0;i<*p;i++)
-	{
-		printf("\n Process P%d\n",i+1);
-		for(j=0;j<*r;j++)
-		{
-			printf("Allocation of Resource %d : ",j+1);
-			scanf("%d",&Allocation[i][j]);
-			printf("Maximum for Resource %d : ",j+1);
-			scanf("%d",&Max[i][j]);
+	for(i=0;i<n;i++){
+		printf("\n");
+		for(j=0;j<m;j++){
+			printf("%d\t",x[i][j]);
 		}
-	}
-	printf("\nAvailable Reasources : \n");
-	for(i=0;i<*r;i++)
-	{
-		printf("Resource %d",i+1);
-		scanf("%d",&Available[0][i]);
+	}	
+}
+
+//Resource Request algorithm
+void res_request(int Allocation[10][10],int N[10][10],int AV[10][10],int pid,int m)
+{
+	int reqmat[1][10];
+	int i;
+	printf("\n Enter additional request :- \n");
+	for(i=0;i<m;i++){
+		printf(" Request for resource %d : ",i+1);
+		scanf("%d",&reqmat[0][i]);
 	}
 	
-	for(i=0;i<*p;i++)
-	for(j=0;j<*r;j++)
-	Need[i][j]=Max[i][j]-Allocation[i][j];
-		
-	printf("\n Allocation Matrix");
-	print(Allocation,*p,*r);
-	printf("\n Maximum Requirement Matrix");
-	print(Max,*p,*r);
-	printf("\n Need Matrix");
-	print(Need,*p,*r);
-}
-int banker(int Allocation[][20],int Need[][20],int Available[1][20],int p,int r)
-{
-	int j,i,arr[20];
-	j=safetyAlgorithm(Allocation,Need,Available,p,r,arr);
-	if(j!=0)
-	{
-		printf("\n\n");
-		for(i=0;i<p;i++)
-		printf("P%d",arr[i]);
-		printf("Safety Sequence has been detected.\n");
-		return 1;
+	for(i=0;i<m;i++)
+		if(reqmat[0][i] > N[pid][i]){
+			printf("\n Error encountered.\n");
+			exit(0);
 	}
-	else
-	{
-		printf("Deadlock has occured.\n");
-		return 0;
+
+	for(i=0;i<m;i++)
+		if(reqmat[0][i] > AV[0][i]){
+			printf("\n Resources unavailable.\n");
+			exit(0);
+		}
+	
+	for(i=0;i<m;i++){
+		AV[0][i]-=reqmat[0][i];
+		Allocation[pid][i]+=reqmat[0][i];
+		N[pid][i]-=reqmat[0][i];
 	}
 }
-// Safety Algorithm
-int safety(int Allocation[][20],int Need[][20],int AV[1][20],int p,int r,int arr[])
-{
+
+//Safety algorithm
+int safety(int Allocation[][10],int N[][10],int AV[1][10],int n,int m,int a[]){
+
 	int i,j,k,x=0;
-	int F[10],Available[1][20];
+	int F[10],W[1][10];
 	int pflag=0,flag=0;
-	for(i=0;i<p;i++)
+	for(i=0;i<n;i++)
 		F[i]=0;
-	for(i=0;i<r;i++)
-		Available[0][i]=AV[0][i];
-	for(k=0;k<p;k++)
-	{
-		for(i=0;i<p;i++)
-		{
-			if(F[i]==0)
-			{
+	for(i=0;i<m;i++)
+		W[0][i]=AV[0][i];
+
+	for(k=0;k<n;k++){
+		for(i=0;i<n;i++){
+			if(F[i] == 0){
 				flag=0;
-				for(j=0;j<r;j++)
-				{
-					if(Need[i][j]>Available[0][j])
+				for(j=0;j<m;j++){
+					if(N[i][j] > W[0][j])
 						flag=1;
 				}
-				if(flag==0 && F[i]==0)
-				{
-					for(j=0;j<r;j++)
-						Available[0][j]+=Allocation[i][j];
+				if(flag == 0 && F[i] == 0){
+					for(j=0;j<m;j++)
+						W[0][j]+=Allocation[i][j];
 					F[i]=1;
 					pflag++;
-					arr[x++]=i;
+					a[x++]=i;
 				}
 			}
 		}
-		if(pflag==p)
+		if(pflag == n)
 			return 1;
 	}
 	return 0;
 }
-// Resource Request Algorithm
-resource_resquest(int Allocation[20][20],int Need[20][20],AV[20][20],int pid,int r)
-{
-	int req_matrix[1][20];
-	int i;
-	printf("Enter Additional Request : \n");
-	for(i=0;i<r;i++)
-	{
-		printf("Request for Resource %d :",i+1);
-		scanf("%d",&req_matrix[0][i]);
+
+
+//Banker's Algorithm
+void accept(int Allocation[][10],int N[][10],int M[10][10],int W[1][10],int *n,int *m){
+	int i,j;
+	printf("\n Enter total no. of processes : ");
+	scanf("%d",n);
+	printf("\n Enter total no. of resources : ");
+	scanf("%d",m);
+	for(i=0;i<*n;i++){
+		printf("\n Process %d\n",i+1);
+		for(j=0;j<*m;j++){
+			printf(" Allocation for resource %d : ",j+1);
+			scanf("%d",&Allocation[i][j]);
+			printf(" Maximum for resource %d : ",j+1);
+			scanf("%d",&M[i][j]);
+		}
 	}
-	for(i=0;i<r;i++)
-		if(req_matrix[0][i] > Need[pid][i])
-		{
-			printf("Error Encountered.\n");
-			exit(0);
-		}
-	for(i=0;i<r;i++)
-		if(req_matrix[0][i] > AV[0][i])
-		{
-			printf("Resource Unavailable.\n");
-			exit(0);
-		}
-	for(i=0;i<r;i++)
-	{
-		AV[0][i]-=req_matrix[0][i];
-		Allocation[pid][i]+=req_matrix[0][i];
-		Need[pid][i]-=req_matrix[0][i];
+	printf("\n Available resources : \n");
+	for(i=0;i<*m;i++){
+		printf(" Resource %d : ",i+1);
+		scanf("%d",&W[0][i]);
+	}
+
+	for(i=0;i<*n;i++)
+		for(j=0;j<*m;j++)
+			N[i][j]=M[i][j]-Allocation[i][j];
+
+	printf("\n Allocation Matrix");
+	print(Allocation,*n,*m);
+	printf("\n Maximum Requirement Matrix");
+	print(M,*n,*m);
+	printf("\n Need Matrix");
+	print(N,*n,*m);
+
+}
+
+int banker(int Allocation[][10],int N[][10],int W[1][10],int n,int m){
+	int j,i,a[10];
+	j=safety(Allocation,N,W,n,m,a);
+	if(j != 0 ){
+		printf("\n\n");
+		for(i=0;i<n;i++)
+		     printf(" P%d  ",a[i]);
+		printf("\n A safety sequence has been detected.\n");
+		return 1;
+	}else{
+		printf("\n Deadlock has occured.\n");
+		return 0;
 	}
 }
-		
+
+
+int main(){
+	int ret;
+	int Allocation[10][10];
+	int M[10][10];
+	int N[10][10];
+	int W[1][10];
+	int n,m,pid,ch;
+	printf("\n ~~~~~~~~~~~~~ BANKERS ALGORITHM ~~~~~~~~~~~~~\n");
+	accept(Allocation,N,M,W,&n,&m);
+	ret=banker(Allocation,N,W,n,m);
+	if(ret !=0 ){
+		printf("\n Do you want make an additional request ? (1=Yes|0=No)");
+		scanf("%d",&ch);
+		if(ch == 1){
+			printf("\n Enter process no. : ");
+			scanf("%d",&pid);
+			res_request(Allocation,N,W,pid-1,m);
+			ret=banker(Allocation,N,W,n,m);
+			if(ret == 0 )
+				exit(0);
+		}
+	}else
+		exit(0);
+	return 0;
+}
