@@ -1,4 +1,3 @@
-                                  // Bankers Algorithm //
 #include<stdio.h>
 #include<stdlib.h>
 
